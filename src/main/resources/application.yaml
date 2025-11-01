@@ -4,7 +4,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb+srv://test:FbVpqtBeeGq90Ca8@fitnesstracker.j5sa1hn.mongodb.net/?appName=FitnessTracker
+      uri:
       database: fitness
 
   jackson:
