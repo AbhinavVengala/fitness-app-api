@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: FitnessTracker
+
+  data:
+    mongodb:
+      uri: mongodb+srv://test:FbVpqtBeeGq90Ca8@fitnesstracker.j5sa1hn.mongodb.net/?appName=FitnessTracker
+      database: fitness
+
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+server:
+  port: 8080
