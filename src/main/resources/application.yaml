@@ -4,7 +4,7 @@ spring:
 
   data:
     mongodb:
-      uri:
+      uri: mongodb+srv://testing:AntiGravity@fitnesstracker.j5sa1hn.mongodb.net/?appName=FitnessTracker
       database: fitness
 
   jackson:
@@ -13,3 +13,9 @@ spring:
 
 server:
   port: 8080
+
+# Logging
+logging:
+  level:
+    com.abhi.FitnessTracker: DEBUG
+    org.springframework.data.mongodb: INFO

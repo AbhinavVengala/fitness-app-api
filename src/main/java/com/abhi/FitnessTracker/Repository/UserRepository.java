@@ -3,7 +3,9 @@ package com.abhi.FitnessTracker.Repository;
 import com.abhi.FitnessTracker.Model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface UserRepository extends MongoRepository<User, String> {
-    User findByEmail(String email);
-}
+import java.util.Optional;
 
+public interface UserRepository extends MongoRepository<User, String> {
+    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
+}
