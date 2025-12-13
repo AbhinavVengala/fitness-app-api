@@ -1,0 +1,23 @@
+# Development Environment Configuration
+spring:
+  data:
+    mongodb:
+      # uri: mongodb://localhost:27017
+      uri: 
+      database: fitness
+
+# JWT Configuration
+jwt:
+  secret: dev-secret-key-for-jwt-signing-needs-to-be-at-least-256-bits-long
+  expiration: 86400000  # 24 hours
+
+# CORS - Allow all for development
+cors:
+  allowed-origins: http://localhost:5173,http://localhost:3000,http://localhost:4173
+
+# Logging - Debug for development
+logging:
+  level:
+    com.abhi.FitnessTracker: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.data.mongodb: DEBUG
