@@ -3,8 +3,24 @@ spring:
   data:
     mongodb:
       # uri: mongodb://localhost:27017
-      uri: 
+      uri: ${MONGODB_URI}
       database: fitness
+  # Check if database exists, create if not
+  jpa:
+    hibernate:
+      ddl-auto: update
+  # Email Configuration (Gmail SMTP)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:YOUR_EMAIL@gmail.com}
+    password: ${MAIL_PASSWORD:YOUR_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # JWT Configuration
 jwt:

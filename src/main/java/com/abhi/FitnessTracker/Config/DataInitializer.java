@@ -9,10 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * Initializes the database with default food and exercise data.
- * Runs on application startup.
- */
 @Component
 public class DataInitializer implements CommandLineRunner {
     
@@ -31,130 +27,219 @@ public class DataInitializer implements CommandLineRunner {
     }
     
     private void initializeFoods() {
-        // Only initialize if empty
-        if (foodRepository.count() > 0) {
-            return;
-        }
-        
         List<Food> foods = List.of(
             // ===== INDIAN FOODS =====
-            // North Indian
+            // North Indian & Breads
             new Food(null, "Roti / Chapati (1 medium)", 85, 3, 15, 1.5, "indian"),
+            new Food(null, "Butter Roti (1 medium)", 115, 3, 15, 4.5, "indian"),
             new Food(null, "Paratha (1 plain)", 180, 4, 25, 7, "indian"),
+            new Food(null, "Aloo Paratha (1 medium)", 210, 5, 32, 8, "indian"),
+            new Food(null, "Paneer Paratha (1 medium)", 240, 9, 28, 10, "indian"),
+            new Food(null, "Gobi Paratha (1 medium)", 190, 5, 29, 7, "indian"),
             new Food(null, "Naan (1 piece)", 260, 8, 45, 5, "indian"),
+            new Food(null, "Butter Naan (1 piece)", 320, 8, 45, 12, "indian"),
+            new Food(null, "Garlic Naan (1 piece)", 280, 8, 46, 7, "indian"),
+            new Food(null, "Bhatura (1 large)", 280, 7, 40, 11, "indian"),
+            new Food(null, "Kulcha (1 piece)", 220, 6, 38, 4, "indian"),
+            new Food(null, "Thepla (1 medium)", 120, 4, 18, 5, "indian"),
+            new Food(null, "Missi Roti (1 medium)", 130, 6, 20, 4, "indian"),
+
+            // Curries & Dals
             new Food(null, "Dal Fry (1 cup)", 150, 9, 20, 4, "indian"),
-            new Food(null, "Dal Makhani (1 cup)", 250, 10, 25, 12, "indian"),
-            new Food(null, "Paneer Butter Masala (1 cup)", 350, 15, 12, 28, "indian"),
-            new Food(null, "Palak Paneer (1 cup)", 280, 14, 10, 20, "indian"),
-            new Food(null, "Chole / Chana Masala (1 cup)", 200, 10, 30, 6, "indian"),
-            new Food(null, "Rajma (1 cup)", 180, 10, 28, 3, "indian"),
-            new Food(null, "Aloo Gobi (1 cup)", 150, 4, 22, 5, "indian"),
-            new Food(null, "Biryani (1 plate)", 400, 12, 50, 15, "indian"),
-            new Food(null, "Pulao (1 cup)", 220, 5, 40, 5, "indian"),
-            new Food(null, "Samosa (1 piece)", 150, 3, 18, 8, "indian"),
-            new Food(null, "Chole Bhature (1 serving)", 450, 12, 55, 20, "indian"),
-            new Food(null, "Poori (2 pieces)", 200, 4, 28, 8, "indian"),
-            new Food(null, "Kheer (1 cup)", 250, 6, 35, 10, "indian"),
-            new Food(null, "Gulab Jamun (2 pieces)", 300, 4, 45, 12, "indian"),
+            new Food(null, "Dal Makhani (1 cup)", 300, 10, 25, 18, "indian"),
+            new Food(null, "Dal Tadka (1 cup)", 170, 9, 21, 6, "indian"),
+            new Food(null, "Moong Dal (1 cup cooked)", 140, 12, 18, 3, "indian"),
+            new Food(null, "Chana Masala (1 cup)", 200, 11, 30, 6, "indian"),
+            new Food(null, "Rajma (1 cup)", 210, 12, 32, 6, "indian"),
+            new Food(null, "Paneer Butter Masala (1 cup)", 380, 14, 15, 30, "indian"),
+            new Food(null, "Palak Paneer (1 cup)", 260, 16, 12, 18, "indian"),
+            new Food(null, "Matar Paneer (1 cup)", 280, 14, 20, 16, "indian"),
+            new Food(null, "Kadai Paneer (1 cup)", 300, 15, 18, 20, "indian"),
+            new Food(null, "Aloo Gobi (1 cup)", 160, 4, 22, 6, "indian"),
+            new Food(null, "Bhindi Masala (1 cup)", 120, 3, 15, 6, "indian"),
+            new Food(null, "Baingan Bharta (1 cup)", 110, 3, 14, 5, "indian"),
+            new Food(null, "Mix Veg Curry (1 cup)", 190, 6, 22, 9, "indian"),
+            new Food(null, "Chicken Curry (1 cup)", 280, 28, 8, 15, "indian"),
+            new Food(null, "Butter Chicken (1 cup)", 450, 25, 12, 35, "indian"),
+            new Food(null, "Fish Curry (1 cup)", 220, 22, 6, 12, "indian"),
+            new Food(null, "Mutton Rogan Josh (1 cup)", 400, 28, 10, 28, "indian"),
+            new Food(null, "Egg Curry (2 eggs + gravy)", 240, 16, 8, 16, "indian"),
+             
+            // Rice Dishes
+            new Food(null, "Plain White Rice (1 cup cooked)", 205, 4, 45, 0.5, "indian"),
+            new Food(null, "Jeera Rice (1 cup)", 230, 4, 45, 4, "indian"),
+            new Food(null, "Veg Pulao (1 cup)", 250, 6, 42, 7, "indian"),
+            new Food(null, "Peas Pulao (1 cup)", 240, 6, 42, 6, "indian"),
+            new Food(null, "Veg Biryani (1 plate)", 350, 9, 55, 12, "indian"),
+            new Food(null, "Chicken Biryani (1 plate)", 550, 35, 60, 18, "indian"),
+            new Food(null, "Mutton Biryani (1 plate)", 650, 35, 60, 28, "indian"),
+            new Food(null, "Egg Biryani (1 plate)", 450, 18, 55, 16, "indian"),
+            new Food(null, "Khichdi (1 cup)", 180, 8, 28, 4, "indian"),
+            new Food(null, "Curd Rice (1 cup)", 220, 8, 35, 6, "indian"),
+            new Food(null, "Lemon Rice (1 cup)", 250, 5, 40, 9, "indian"),
+            new Food(null, "Tamarind Rice (1 cup)", 280, 5, 48, 10, "indian"),
+            new Food(null, "Tomato Rice (1 cup)", 240, 4, 42, 7, "indian"),
             
-            // South Indian
-            new Food(null, "Plain Dosa (1 medium)", 120, 3, 25, 2, "indian"),
-            new Food(null, "Masala Dosa", 250, 6, 40, 8, "indian"),
-            new Food(null, "Idli (2 pieces)", 80, 2, 16, 0.4, "indian"),
-            new Food(null, "Vada (1 piece)", 130, 4, 15, 6, "indian"),
-            new Food(null, "Upma (1 cup)", 200, 5, 35, 5, "indian"),
-            new Food(null, "Pongal (1 cup)", 230, 6, 38, 6, "indian"),
-            new Food(null, "Sambhar (1 cup)", 100, 5, 15, 2, "indian"),
-            new Food(null, "Rasam (1 cup)", 50, 2, 8, 1, "indian"),
-            new Food(null, "Uttapam (1 medium)", 180, 5, 30, 4, "indian"),
-            new Food(null, "Appam (2 pieces)", 160, 3, 28, 3, "indian"),
+            // South Indian Breakfast
+            new Food(null, "Plain Dosa (1 medium)", 130, 3, 24, 3, "indian"),
+            new Food(null, "Masala Dosa (1 medium)", 350, 8, 45, 16, "indian"),
+            new Food(null, "Rava Dosa (1 medium)", 160, 4, 28, 4, "indian"),
+            new Food(null, "Mysore Masala Dosa", 380, 8, 48, 18, "indian"),
+            new Food(null, "Set Dosa (1 piece)", 100, 2, 18, 2, "indian"),
+            new Food(null, "Idli (1 piece)", 50, 2, 10, 0, "indian"),
+            new Food(null, "Rava Idli (1 piece)", 70, 2, 12, 1, "indian"),
+            new Food(null, "Medu Vada (1 piece)", 140, 4, 15, 8, "indian"),
+            new Food(null, "Dal Vada (1 piece)", 120, 5, 12, 6, "indian"),
+            new Food(null, "Uttapam (1 medium)", 220, 6, 35, 6, "indian"),
+            new Food(null, "Onion Uttapam", 240, 6, 38, 7, "indian"),
+            new Food(null, "Appam (1 piece)", 80, 1, 15, 2, "indian"),
+            new Food(null, "Upma (1 cup)", 220, 6, 35, 7, "indian"),
+            new Food(null, "Vermicelli Upma (1 cup)", 200, 5, 38, 5, "indian"),
+            new Food(null, "Ven Pongal (1 cup)", 280, 8, 40, 10, "indian"),
+            new Food(null, "Sweet Pongal (1 cup)", 350, 4, 65, 10, "indian"),
+            new Food(null, "Puttu (1 piece)", 160, 4, 32, 2, "indian"),
+            new Food(null, "Idiyappam (2 pieces)", 120, 2, 26, 1, "indian"),
+            new Food(null, "Pesarattu (1 medium)", 200, 10, 30, 5, "indian"),
+            new Food(null, "Adai (1 medium)", 220, 10, 32, 6, "indian"),
             
-            // Street Food
-            new Food(null, "Pav Bhaji (1 serving)", 400, 10, 55, 15, "indian"),
-            new Food(null, "Bhel Puri (1 plate)", 200, 4, 35, 5, "indian"),
-            new Food(null, "Pani Puri (6 pieces)", 180, 3, 30, 5, "indian"),
-            new Food(null, "Vada Pav (1 piece)", 290, 6, 40, 12, "indian"),
-            new Food(null, "Dabeli (1 piece)", 250, 5, 38, 8, "indian"),
-            new Food(null, "Kachori (1 piece)", 180, 4, 22, 9, "indian"),
-            
-            // ===== INTERNATIONAL FOODS =====
+            // Accompaniments (South)
+            new Food(null, "Sambhar (1 cup)", 120, 6, 18, 3, "indian"),
+            new Food(null, "Coconut Chutney (1 tbsp)", 45, 1, 2, 4, "indian"),
+            new Food(null, "Tomato Chutney (1 tbsp)", 25, 0, 3, 1, "indian"),
+            new Food(null, "Rasam (1 cup)", 60, 2, 10, 1, "indian"),
+            new Food(null, "Avial (1 cup)", 180, 5, 15, 10, "indian"),
+            new Food(null, "Poriyal (1 cup)", 100, 3, 12, 5, "indian"),
+
+            // Street Food & Snacks (Chaat)
+            new Food(null, "Samosa (1 piece)", 250, 4, 25, 16, "indian"),
+            new Food(null, "Samosa Chaat (1 plate)", 350, 8, 45, 18, "indian"),
+            new Food(null, "Kachori (1 piece)", 280, 5, 28, 18, "indian"),
+            new Food(null, "Pav Bhaji (1 plate)", 450, 12, 60, 18, "indian"),
+            new Food(null, "Vada Pav (1 piece)", 300, 8, 40, 14, "indian"),
+            new Food(null, "Pani Puri (6 pieces)", 180, 4, 32, 6, "indian"),
+            new Food(null, "Bhel Puri (1 plate)", 220, 6, 38, 5, "indian"),
+            new Food(null, "Sev Puri (1 plate)", 280, 6, 35, 14, "indian"),
+            new Food(null, "Dahi Puri (1 plate)", 320, 8, 38, 16, "indian"),
+            new Food(null, "Papdi Chaat (1 plate)", 300, 7, 35, 15, "indian"),
+            new Food(null, "Aloo Tikki (1 piece)", 180, 3, 22, 10, "indian"),
+            new Food(null, "Dhokla (1 piece)", 60, 2, 8, 2, "indian"),
+            new Food(null, "Khandvi (1 roll)", 45, 2, 4, 2, "indian"),
+            new Food(null, "Pakora - Onion/Veg (1 piece)", 60, 1, 5, 4, "indian"),
+            new Food(null, "Pakora - Paneer (1 piece)", 90, 3, 4, 7, "indian"),
+            new Food(null, "Momos - Veg steamed (1 piece)", 40, 1, 8, 0.5, "indian"),
+            new Food(null, "Momos - Chicken steamed (1 piece)", 50, 3, 6, 1, "indian"),
+
+            // Sweets & Desserts
+            new Food(null, "Gulab Jamun (1 piece)", 150, 2, 22, 6, "indian"),
+            new Food(null, "Rasgulla (1 piece)", 120, 2, 26, 1, "indian"),
+            new Food(null, "Jalebi (1 large piece)", 180, 1, 30, 8, "indian"),
+            new Food(null, "Kheer / Rice Pudding (1 cup)", 280, 7, 40, 11, "indian"),
+            new Food(null, "Gajar Ka Halwa (1 cup)", 350, 6, 45, 16, "indian"),
+            new Food(null, "Sooji Halwa (1 cup)", 320, 4, 42, 15, "indian"),
+            new Food(null, "Mysore Pak (1 piece)", 200, 1, 18, 14, "indian"),
+            new Food(null, "Barfi/Katli (1 piece)", 110, 2, 14, 6, "indian"),
+            new Food(null, "Ladoo - Besan/Motichoor (1 piece)", 180, 3, 22, 10, "indian"),
+            new Food(null, "Payasam / Kheer (1 cup)", 250, 5, 35, 10, "indian"),
+            new Food(null, "Rasmalai (1 piece)", 160, 4, 18, 8, "indian"),
+
+            // Beverages
+            new Food(null, "Masala Chai (1 cup with milk)", 120, 4, 15, 5, "beverages"),
+            new Food(null, "Filter Coffee (1 cup with milk)", 100, 3, 12, 4, "beverages"),
+            new Food(null, "Lassi - Sweet (1 glass)", 220, 6, 30, 10, "beverages"),
+            new Food(null, "Lassi - Salted/Chaas (1 glass)", 60, 3, 5, 3, "beverages"),
+            new Food(null, "Thandai (1 glass)", 280, 6, 35, 12, "beverages"),
+            new Food(null, "Badam Milk (1 glass)", 250, 8, 25, 14, "beverages"),
+            new Food(null, "Sugarcane Juice (1 glass)", 180, 0, 45, 0, "beverages"),
+            new Food(null, "Coconut Water (1 glass)", 40, 1, 9, 0, "beverages"),
+            new Food(null, "Nimbu Pani / Lemonade (1 glass)", 50, 0, 13, 0, "beverages"),
+
+             // ===== INTERNATIONAL FOODS (Common in India) =====
             // Proteins
             new Food(null, "Chicken Breast (100g grilled)", 165, 31, 0, 3.6, "protein"),
             new Food(null, "Chicken Thigh (100g)", 209, 26, 0, 11, "protein"),
             new Food(null, "Salmon (100g)", 208, 20, 0, 13, "protein"),
             new Food(null, "Tuna (100g canned)", 130, 28, 0, 1, "protein"),
-            new Food(null, "Eggs (2 whole)", 140, 12, 1, 10, "protein"),
-            new Food(null, "Egg Whites (4)", 68, 14, 0, 0, "protein"),
-            new Food(null, "Paneer (100g)", 265, 18, 4, 20, "protein"),
-            new Food(null, "Tofu (100g)", 76, 8, 2, 4, "protein"),
-            new Food(null, "Cottage Cheese (1 cup)", 220, 28, 6, 10, "protein"),
-            new Food(null, "Greek Yogurt (1 cup)", 150, 15, 10, 5, "protein"),
+            new Food(null, "Eggs (1 whole large)", 72, 6, 0.4, 5, "protein"),
+            new Food(null, "Egg Whites (1 large)", 17, 3.6, 0.2, 0, "protein"),
+            new Food(null, "Paneer (100g)", 265, 18, 1.2, 20.8, "protein"),
+            new Food(null, "Tofu (100g)", 76, 8, 2, 4.8, "protein"),
+            new Food(null, "Soya Chunks (50g raw)", 172, 26, 16, 0.5, "protein"),
+            new Food(null, "Greek Yogurt (1 cup)", 130, 22, 9, 0, "protein"),
             new Food(null, "Whey Protein Scoop (30g)", 120, 24, 3, 1.5, "protein"),
             
             // Grains & Carbs
-            new Food(null, "White Rice (1 cup cooked)", 205, 4, 45, 0.4, "grains"),
-            new Food(null, "Brown Rice (1 cup cooked)", 215, 5, 45, 1.8, "grains"),
-            new Food(null, "Oats (1/2 cup dry)", 150, 5, 27, 2.5, "grains"),
-            new Food(null, "Quinoa (1 cup cooked)", 220, 8, 39, 3.5, "grains"),
-            new Food(null, "Whole Wheat Bread (2 slices)", 160, 7, 28, 2, "grains"),
-            new Food(null, "Pasta (1 cup cooked)", 220, 8, 43, 1.3, "grains"),
-            new Food(null, "Sweet Potato (1 medium)", 103, 2, 24, 0.1, "grains"),
-            new Food(null, "Potato (1 medium boiled)", 130, 3, 30, 0.1, "grains"),
+            new Food(null, "Brown Rice (1 cup cooked)", 216, 5, 45, 1.8, "grains"),
+            new Food(null, "Oats (50g raw)", 190, 6.5, 34, 3, "grains"),
+            new Food(null, "Quinoa (1 cup cooked)", 222, 8, 39, 3.5, "grains"),
+            new Food(null, "Whole Wheat Bread (2 slices)", 180, 8, 32, 2, "grains"),
+            new Food(null, "Multigrain Bread (2 slices)", 200, 9, 36, 3, "grains"),
+            new Food(null, "Pasta - White (1 cup cooked)", 220, 8, 43, 1.3, "grains"),
+            new Food(null, "Pasta - Whole Wheat (1 cup cooked)", 180, 8, 37, 1.5, "grains"),
+            new Food(null, "Sweet Potato (150g baked)", 135, 3, 31, 0.2, "grains"),
+            new Food(null, "Potato (150g boiled)", 130, 3, 30, 0.2, "grains"),
+            new Food(null, "Corn / Bhutta (1 cob)", 90, 3, 19, 1, "grains"),
             
             // Fruits
             new Food(null, "Apple (1 medium)", 95, 0.5, 25, 0.3, "fruits"),
             new Food(null, "Banana (1 medium)", 105, 1.3, 27, 0.4, "fruits"),
-            new Food(null, "Orange (1 medium)", 62, 1, 15, 0.2, "fruits"),
-            new Food(null, "Mango (1 cup sliced)", 100, 1, 25, 0.6, "fruits"),
-            new Food(null, "Papaya (1 cup cubed)", 55, 0.8, 14, 0.2, "fruits"),
+            new Food(null, "Orange (1 medium)", 62, 1.2, 15, 0.2, "fruits"),
+            new Food(null, "Mango (1 medium)", 200, 2.8, 50, 1, "fruits"),
+            new Food(null, "Papaya (1 cup)", 60, 0.7, 15, 0.4, "fruits"),
             new Food(null, "Watermelon (1 cup)", 46, 0.9, 11, 0.2, "fruits"),
-            new Food(null, "Grapes (1 cup)", 104, 1, 27, 0.2, "fruits"),
-            new Food(null, "Pomegranate (1 cup)", 145, 3, 33, 2, "fruits"),
+            new Food(null, "Grapes (1 cup)", 104, 1.1, 27, 0.2, "fruits"),
+            new Food(null, "Pomegranate (1/2 cup)", 72, 1.5, 16, 1, "fruits"),
+            new Food(null, "Guava (1 medium)", 38, 1.5, 8, 0.5, "fruits"),
+            new Food(null, "Pineapple (1 cup)", 82, 0.9, 21, 0.2, "fruits"),
             
             // Vegetables
-            new Food(null, "Broccoli (1 cup)", 55, 4, 11, 0.5, "vegetables"),
-            new Food(null, "Spinach (1 cup cooked)", 41, 5, 7, 0.5, "vegetables"),
+            new Food(null, "Broccoli (1 cup)", 55, 3.7, 11, 0.6, "vegetables"),
+            new Food(null, "Spinach / Palak (1 cup cooked)", 41, 5, 7, 0.5, "vegetables"),
             new Food(null, "Carrot (1 medium)", 25, 0.6, 6, 0.1, "vegetables"),
-            new Food(null, "Cucumber (1 cup sliced)", 16, 0.8, 4, 0.1, "vegetables"),
+            new Food(null, "Cucumber (1 medium)", 30, 2, 6, 0.2, "vegetables"),
             new Food(null, "Tomato (1 medium)", 22, 1, 5, 0.2, "vegetables"),
-            new Food(null, "Bell Pepper (1 medium)", 30, 1, 7, 0.3, "vegetables"),
-            new Food(null, "Onion (1 medium)", 44, 1, 10, 0.1, "vegetables"),
+            new Food(null, "Cauliflower (1 cup)", 27, 2, 5, 0.3, "vegetables"),
+            new Food(null, "Cabbage (1 cup)", 22, 1, 5, 0.1, "vegetables"),
+            new Food(null, "Green Beans (1 cup)", 31, 2, 7, 0.1, "vegetables"),
+            new Food(null, "Bottle Gourd / Lauki (1 cup)", 20, 1, 4, 0.1, "vegetables"),
             
             // Nuts & Seeds
-            new Food(null, "Almonds (1 oz)", 164, 6, 6, 14, "nuts"),
-            new Food(null, "Walnuts (1 oz)", 185, 4, 4, 18, "nuts"),
-            new Food(null, "Cashews (1 oz)", 157, 5, 9, 12, "nuts"),
-            new Food(null, "Peanuts (1 oz)", 161, 7, 5, 14, "nuts"),
-            new Food(null, "Chia Seeds (2 tbsp)", 138, 5, 12, 9, "nuts"),
-            new Food(null, "Flax Seeds (2 tbsp)", 110, 4, 6, 8, "nuts"),
-            new Food(null, "Peanut Butter (2 tbsp)", 190, 7, 7, 16, "nuts"),
+            new Food(null, "Almonds (10 nuts)", 70, 2.5, 2.5, 6, "nuts"),
+            new Food(null, "Walnuts (5 halves)", 65, 1.5, 1.4, 6.5, "nuts"),
+            new Food(null, "Cashews (10 nuts)", 110, 3.5, 6, 9, "nuts"),
+            new Food(null, "Peanuts (1 handful / 30g)", 170, 7, 5, 14, "nuts"),
+            new Food(null, "Chia Seeds (1 tbsp)", 70, 2.5, 6, 4.5, "nuts"),
+            new Food(null, "Flax Seeds (1 tbsp)", 55, 1.9, 3, 4.3, "nuts"),
+            new Food(null, "Peanut Butter (1 tbsp)", 95, 3.5, 3.5, 8, "nuts"),
             
-            // Dairy
-            new Food(null, "Milk - Full Fat (1 glass)", 150, 8, 12, 8, "dairy"),
-            new Food(null, "Milk - Skimmed (1 glass)", 90, 8, 12, 0.5, "dairy"),
-            new Food(null, "Curd / Yogurt (1 cup)", 100, 4, 8, 5, "dairy"),
-            new Food(null, "Buttermilk (1 glass)", 40, 2, 5, 1, "dairy"),
-            new Food(null, "Cheese Slice (1)", 70, 4, 0.5, 5.5, "dairy"),
-            
-            // Beverages
-            new Food(null, "Green Tea (1 cup)", 2, 0, 0, 0, "beverages"),
-            new Food(null, "Black Coffee (1 cup)", 5, 0.3, 0, 0, "beverages"),
-            new Food(null, "Chai / Tea with Milk (1 cup)", 60, 2, 8, 2, "beverages"),
-            new Food(null, "Coconut Water (1 glass)", 45, 2, 9, 0.5, "beverages"),
-            new Food(null, "Fresh Lime Soda", 50, 0, 12, 0, "beverages"),
-            new Food(null, "Lassi - Sweet (1 glass)", 180, 5, 25, 6, "beverages"),
-            new Food(null, "Protein Shake (with milk)", 280, 30, 20, 8, "beverages"),
+            // Dairy & Others
+            new Food(null, "Milk - Toned/Cow (1 glass / 240ml)", 120, 8, 11, 4, "dairy"),
+            new Food(null, "Milk - Full Cream/Buffalo (1 glass)", 180, 9, 12, 11, "dairy"),
+            new Food(null, "Curd / Dahi (1 cup)", 150, 8, 10, 8, "dairy"),
+            new Food(null, "Cheese Slice (1)", 70, 4, 1, 6, "dairy"),
+            new Food(null, "Butter (1 tsp)", 34, 0, 0, 4, "dairy"),
+            new Food(null, "Ghee (1 tsp)", 45, 0, 0, 5, "dairy"),
             
             // Snacks
             new Food(null, "Popcorn (2 cups air-popped)", 62, 2, 12, 0.7, "snacks"),
-            new Food(null, "Dark Chocolate (1 oz)", 170, 2, 13, 12, "snacks"),
+            new Food(null, "Dark Chocolate (2 squares)", 60, 1, 6, 4, "snacks"),
             new Food(null, "Makhana / Fox Nuts (1 cup)", 100, 3, 18, 1, "snacks"),
-            new Food(null, "Roasted Chana (1/4 cup)", 120, 7, 18, 2, "snacks"),
-            new Food(null, "Protein Bar (1 bar)", 200, 20, 22, 7, "snacks")
+            new Food(null, "Roasted Chana (1 handful)", 100, 6, 15, 1.5, "snacks"),
+            new Food(null, "Protein Bar (1 bar)", 220, 20, 24, 8, "snacks"),
+            new Food(null, "Marie Biscuit (1 piece)", 25, 0.5, 4, 0.5, "snacks"),
+            new Food(null, "Rusk (1 piece)", 45, 1, 8, 1, "snacks"),
+            new Food(null, "Maggi Noodles (1 pack)", 310, 5, 45, 12, "snacks")
         );
         
-        foodRepository.saveAll(foods);
-        System.out.println("Initialized " + foods.size() + " foods in database");
+        int addedCount = 0;
+        for (Food food : foods) {
+            if (!foodRepository.existsByName(food.getName())) {
+                foodRepository.save(food);
+                addedCount++;
+            }
+        }
+        
+        System.out.println("Initialized/Updated foods. Added " + addedCount + " new items.");
+
     }
     
     private void initializeExercises() {

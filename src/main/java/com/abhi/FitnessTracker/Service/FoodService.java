@@ -4,6 +4,8 @@ import com.abhi.FitnessTracker.Model.Food;
 import com.abhi.FitnessTracker.Repository.FoodRepository;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,27 +22,36 @@ public class FoodService {
     }
     
     /**
-     * Search foods by name (case-insensitive)
+     * Search foods by name (paginated)
      */
-    public List<Food> searchByName(String query) {
+    public Page<Food> searchByName(String query, String userId, Pageable pageable) {
         if (query == null || query.trim().isEmpty()) {
-            return List.of();
+            return Page.empty();
         }
-        return foodRepository.findByNameContainingIgnoreCase(query.trim());
+        if (userId != null) {
+            return foodRepository.searchByNameAndUser(query.trim(), userId, pageable);
+        }
+        return foodRepository.findByNameContainingIgnoreCaseAndCreatedByUserIdIsNull(query.trim(), pageable);
     }
     
     /**
-     * Get all foods
+     * Get all foods (paginated)
      */
-    public List<Food> getAll() {
-        return foodRepository.findAll();
+    public Page<Food> getAll(String userId, Pageable pageable) {
+        if (userId != null) {
+            return foodRepository.findSystemAndUserFoods(userId, pageable);
+        }
+        return foodRepository.findByCreatedByUserIdIsNull(pageable);
     }
     
     /**
-     * Get foods by category
+     * Get foods by category (paginated)
      */
-    public List<Food> getByCategory(String category) {
-        return foodRepository.findByCategory(category);
+    public Page<Food> getByCategory(String category, String userId, Pageable pageable) {
+        if (userId != null) {
+            return foodRepository.findByCategoryAndUser(category, userId, pageable);
+        }
+        return foodRepository.findByCategoryAndCreatedByUserIdIsNull(category, pageable);
     }
     
     /**
@@ -72,10 +83,31 @@ public class FoodService {
     /**
      * Delete a food by ID
      */
-    public boolean deleteFood(String id) {
-        if (!foodRepository.existsById(id)) {
+    /**
+     * Delete a food by ID (Secure)
+     */
+    public boolean deleteFood(String id, String requesterId, boolean isAdmin) {
+        Optional<Food> foodOpt = foodRepository.findById(id);
+        if (foodOpt.isEmpty()) {
             return false;
         }
+        Food food = foodOpt.get();
+        
+        // Admin can delete anything
+        if (isAdmin) {
+            foodRepository.deleteById(id);
+            return true;
+        }
+        
+        // Regular users checks
+        if (food.getCreatedByUserId() == null) {
+            throw new RuntimeException("You cannot delete system foods");
+        }
+        
+        if (!food.getCreatedByUserId().equals(requesterId)) {
+            throw new RuntimeException("You do not have permission to delete this food");
+        }
+        
         foodRepository.deleteById(id);
         return true;
     }

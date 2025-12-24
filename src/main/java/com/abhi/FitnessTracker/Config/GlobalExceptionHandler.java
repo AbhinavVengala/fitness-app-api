@@ -31,11 +31,13 @@ public class GlobalExceptionHandler {
                 error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid value",
                 (existing, replacement) -> existing
             ));
+            
+        String errorMessage = fieldErrors.values().stream().findFirst().orElse("Validation Failed");
         
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now().toString());
         response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "Validation Failed");
+        response.put("error", errorMessage); 
         response.put("message", "One or more fields have invalid values");
         response.put("fieldErrors", fieldErrors);
         

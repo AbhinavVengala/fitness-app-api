@@ -18,10 +18,16 @@ import java.util.UUID;
 public class AuthService {
     
     private final UserRepository userRepository;
+    private final com.abhi.FitnessTracker.Repository.PasswordResetTokenRepository tokenRepository;
+    private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder;
     
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, 
+                       com.abhi.FitnessTracker.Repository.PasswordResetTokenRepository tokenRepository,
+                       EmailService emailService) {
         this.userRepository = userRepository;
+        this.tokenRepository = tokenRepository;
+        this.emailService = emailService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
     
@@ -82,5 +88,55 @@ public class AuthService {
      */
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    /**
+     * Initiate password reset
+     */
+    public void forgotPassword(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            // Security: Don't reveal if user exists
+            return; 
+        }
+        
+        // Clean up old tokens
+        tokenRepository.deleteByEmail(email);
+        
+        // Create new token
+        String token = UUID.randomUUID().toString();
+        com.abhi.FitnessTracker.Model.PasswordResetToken resetToken = new com.abhi.FitnessTracker.Model.PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setEmail(email);
+        resetToken.setExpiryDate(java.time.LocalDateTime.now().plusHours(1));
+        tokenRepository.save(resetToken);
+        
+        // Send email
+        emailService.sendPasswordResetEmail(email, token);
+    }
+
+    /**
+     * Complete password reset
+     */
+    public void resetPassword(String token, String newPassword) {
+        Optional<com.abhi.FitnessTracker.Model.PasswordResetToken> tokenOpt = tokenRepository.findByToken(token);
+        
+        if (tokenOpt.isEmpty()) {
+            throw new RuntimeException("Invalid or expired password reset token");
+        }
+        
+        com.abhi.FitnessTracker.Model.PasswordResetToken resetToken = tokenOpt.get();
+        if (resetToken.isExpired()) {
+            tokenRepository.delete(resetToken);
+            throw new RuntimeException("Token has expired");
+        }
+        
+        User user = userRepository.findByEmail(resetToken.getEmail())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+            
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        
+        tokenRepository.delete(resetToken);
     }
 }

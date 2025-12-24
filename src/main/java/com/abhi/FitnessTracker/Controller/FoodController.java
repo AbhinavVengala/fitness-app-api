@@ -2,6 +2,9 @@ package com.abhi.FitnessTracker.Controller;
 
 import com.abhi.FitnessTracker.Model.Food;
 import com.abhi.FitnessTracker.Service.FoodService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,78 +22,55 @@ import java.util.stream.Collectors;
 public class FoodController {
     
     private final FoodService foodService;
+    private final com.abhi.FitnessTracker.Repository.UserRepository userRepository;
     
-    public FoodController(FoodService foodService) {
+    public FoodController(FoodService foodService, com.abhi.FitnessTracker.Repository.UserRepository userRepository) {
         this.foodService = foodService;
+        this.userRepository = userRepository;
     }
     
     /**
-     * Get all foods (system + user's custom)
-     * GET /api/foods?userId={userId}
+     * Get all foods (system + user's custom) - Paginated
+     * GET /api/foods?userId={userId}&page=0&size=20
      */
     @GetMapping
-    public ResponseEntity<List<Food>> getAllFoods(@RequestParam(required = false) String userId) {
-        List<Food> foods = foodService.getAll();
+    public ResponseEntity<List<Food>> getAllFoods(
+            @RequestParam(required = false) String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
         
-        // Filter: show system foods (createdByUserId = null) + user's own custom foods
-        if (userId != null) {
-            foods = foods.stream()
-                .filter(f -> f.getCreatedByUserId() == null || f.getCreatedByUserId().equals(userId))
-                .collect(Collectors.toList());
-        } else {
-            // Only show system foods if no userId provided
-            foods = foods.stream()
-                .filter(f -> f.getCreatedByUserId() == null)
-                .collect(Collectors.toList());
-        }
-        
-        return ResponseEntity.ok(foods);
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(foodService.getAll(userId, pageable).getContent());
     }
     
     /**
-     * Search foods by name
-     * GET /api/foods/search?q={query}&userId={userId}
+     * Search foods by name - Paginated
+     * GET /api/foods/search?q={query}&userId={userId}&page=0&size=20
      */
     @GetMapping("/search")
     public ResponseEntity<List<Food>> searchFoods(
             @RequestParam String q,
-            @RequestParam(required = false) String userId) {
-        List<Food> foods = foodService.searchByName(q);
-        
-        if (userId != null) {
-            foods = foods.stream()
-                .filter(f -> f.getCreatedByUserId() == null || f.getCreatedByUserId().equals(userId))
-                .collect(Collectors.toList());
-        } else {
-            foods = foods.stream()
-                .filter(f -> f.getCreatedByUserId() == null)
-                .collect(Collectors.toList());
-        }
-        
-        return ResponseEntity.ok(foods);
+            @RequestParam(required = false) String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+            
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(foodService.searchByName(q, userId, pageable).getContent());
     }
     
     /**
-     * Get foods by category
-     * GET /api/foods/category/{category}?userId={userId}
+     * Get foods by category - Paginated
+     * GET /api/foods/category/{category}?userId={userId}&page=0&size=20
      */
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Food>> getFoodsByCategory(
             @PathVariable String category,
-            @RequestParam(required = false) String userId) {
-        List<Food> foods = foodService.getByCategory(category);
-        
-        if (userId != null) {
-            foods = foods.stream()
-                .filter(f -> f.getCreatedByUserId() == null || f.getCreatedByUserId().equals(userId))
-                .collect(Collectors.toList());
-        } else {
-            foods = foods.stream()
-                .filter(f -> f.getCreatedByUserId() == null)
-                .collect(Collectors.toList());
-        }
-        
-        return ResponseEntity.ok(foods);
+            @RequestParam(required = false) String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+            
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(foodService.getByCategory(category, userId, pageable).getContent());
     }
     
     /**
@@ -124,9 +104,13 @@ public class FoodController {
      * DELETE /api/foods/{id}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFood(@PathVariable String id) {
+    public ResponseEntity<?> deleteFood(@PathVariable String id, org.springframework.security.core.Authentication authentication) {
         try {
-            boolean deleted = foodService.deleteFood(id);
+            String email = authentication.getName();
+            var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+                
+            boolean deleted = foodService.deleteFood(id, user.getId(), user.isAdmin());
             if (!deleted) {
                 return ResponseEntity.notFound().build();
             }
