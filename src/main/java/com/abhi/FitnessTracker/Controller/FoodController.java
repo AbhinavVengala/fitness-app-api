@@ -140,5 +140,18 @@ public class FoodController {
     public ResponseEntity<List<Food>> addFoods(@RequestBody List<Food> foods) {
         return ResponseEntity.ok(foodService.addFoods(foods));
     }
+
+    /**
+     * Get food by barcode
+     * GET /api/foods/barcode/{barcode}
+     */
+    @GetMapping("/barcode/{barcode}")
+    public ResponseEntity<Food> getFoodByBarcode(@PathVariable String barcode) {
+        Food food = foodService.getFoodByBarcode(barcode);
+        if (food == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(food);
+    }
 }
 

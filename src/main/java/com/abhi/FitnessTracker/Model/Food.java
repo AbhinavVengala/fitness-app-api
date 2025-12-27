@@ -24,6 +24,8 @@ public class Food {
     private double carbs;
     private double fats;
     private String category; // indian, protein, grains, fruits, vegetables, nuts, dairy, beverages, snacks
+    private String imageUrl;
+    private String barcode;
     private String createdByUserId; // null = system/admin, userId = user custom item
     
     // Constructor without createdByUserId for seed data
@@ -34,7 +36,21 @@ public class Food {
         this.protein = protein;
         this.carbs = carbs;
         this.fats = fats;
+        this.fats = fats;
         this.category = category;
+        this.imageUrl = null; // Default null or assign later
+        this.createdByUserId = null;
+    }
+
+    public Food(String id, String name, double calories, double protein, double carbs, double fats, String category, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.calories = calories;
+        this.protein = protein;
+        this.carbs = carbs;
+        this.fats = fats;
+        this.category = category;
+        this.imageUrl = imageUrl;
         this.createdByUserId = null;
     }
 }

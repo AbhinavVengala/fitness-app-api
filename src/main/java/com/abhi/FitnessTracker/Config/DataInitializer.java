@@ -231,14 +231,27 @@ public class DataInitializer implements CommandLineRunner {
         );
         
         int addedCount = 0;
+        int updatedCount = 0;
         for (Food food : foods) {
-            if (!foodRepository.existsByName(food.getName())) {
+            Food existing = foodRepository.findByName(food.getName());
+            
+            // Assign image
+            String imageUrl = getFoodImage(food.getName(), food.getCategory());
+            
+            if (existing != null) {
+                // Update existing
+                existing.setImageUrl(imageUrl);
+                foodRepository.save(existing);
+                updatedCount++;
+            } else {
+                // New food
+                food.setImageUrl(imageUrl);
                 foodRepository.save(food);
                 addedCount++;
             }
         }
         
-        System.out.println("Initialized/Updated foods. Added " + addedCount + " new items.");
+        System.out.println("Initialized/Updated foods. Added " + addedCount + ", Updated " + updatedCount + " items.");
 
     }
     
@@ -345,8 +358,148 @@ public class DataInitializer implements CommandLineRunner {
             new Exercise(null, "Stair Climbing", "duration", null, 8.5, "sports")
         );
         
-        exerciseRepository.saveAll(exercises);
-        System.out.println("Initialized " + exercises.size() + " exercises in database");
+        for (Exercise exercise : exercises) {
+            Exercise existing = exerciseRepository.findByName(exercise.getName()).orElse(null);
+            
+            // Assign image
+            String imageUrl = getExerciseImage(exercise.getName(), exercise.getCategory());
+            
+            if (existing != null) {
+                // Update existing
+                existing.setImageUrl(imageUrl);
+                exerciseRepository.save(existing);
+            } else {
+                // New exercise
+                exercise.setImageUrl(imageUrl);
+                exerciseRepository.save(exercise);
+            }
+        }
+        System.out.println("Initialized/Updated exercises with images.");
+    }
+    
+    // --- Image Helper Methods ---
+    
+    private String getFoodImage(String name, String category) {
+        String n = name.toLowerCase();
+        String c = category.toLowerCase();
+        
+        // Base URL
+        String baseUrl = "https://images.unsplash.com/photo-";
+        String params = "?auto=format&fit=crop&w=500&q=80";
+
+        // --- SPECIFIC INDIAN DISHES ---
+        if (n.contains("butter chicken") || n.contains("makhani")) return baseUrl + "1603894584373-b42c7e093cfd" + params; // Butter Chicken
+        if (n.contains("palak paneer") || n.contains("saag")) return baseUrl + "1606497525501-696001d4f9a0" + params; // Palak Paneer / Thali
+        if (n.contains("paneer")) return baseUrl + "1631452180519-c0250721dc3e" + params; // Generic Paneer
+        if (n.contains("chole") || n.contains("chana")) return baseUrl + "1589302596001-4b3c7990a69d" + params; // Chole
+        if (n.contains("rajma")) return baseUrl + "1546833999-b9f58160293f" + params; // Rajma (Bean Curry)
+        if (n.contains("dal")) return baseUrl + "1589302596001-4b3c7990a69d" + params; // Dal
+        if (n.contains("sambar")) return baseUrl + "1601050690597-df0568f70950" + params; // Sambar/Bowl
+
+        if (n.contains("dosa")) return baseUrl + "1668236543090-d2f4927d9877" + params; // Dosa
+        if (n.contains("idli")) return baseUrl + "1589301760574-d81d63940642" + params; // Idli
+        if (n.contains("vada")) return baseUrl + "1601050690597-df0568f70950" + params; // Vada
+        if (n.contains("upma")) return baseUrl + "1515516941852-98876d831de6" + params; // Upma (Semolina texture)
+        if (n.contains("poha")) return baseUrl + "1515516941852-98876d831de6" + params; // Poha (Flattened rice)
+
+        if (n.contains("biryani")) return baseUrl + "1633945274405-b6c8069047b0" + params; // Biryani
+        if (n.contains("khichdi") || n.contains("pongal")) return baseUrl + "1589302596001-4b3c7990a69d" + params; // Soft rice/lentil
+        
+        // --- BREADS ---
+        if (n.contains("naan")) return baseUrl + "1626082927389-e175950d8880" + params; // Naan
+        if (n.contains("roti") || n.contains("chapati") || n.contains("phulka")) return baseUrl + "1601050690597-df0568f70950" + params; // Roti
+        if (n.contains("paratha") || n.contains("alu paratha")) return baseUrl + "1626082927389-e175950d8880" + params; // Paratha stuffed
+        if (n.contains("bhature") || n.contains("puri")) return baseUrl + "1626082927389-e175950d8880" + params; // Fried Bread
+
+        // --- COMMON FOODS ---
+        if (n.contains("rice")) return baseUrl + "1516685018646-612d0c6e57b3" + params; // White Rice
+        if (n.contains("jeera rice")) return baseUrl + "1516685018646-612d0c6e57b3" + params;
+        
+        if (n.contains("egg") || n.contains("omelet") || n.contains("bhurji")) return baseUrl + "1506976785307-8732e854ad03" + params; // Eggs
+        if (n.contains("chicken curry")) return baseUrl + "1603894584373-b42c7e093cfd" + params; // Chicken Curry
+        if (n.contains("chicken")) return baseUrl + "1604908176997-125f25cc6f3d" + params; // General Chicken
+        if (n.contains("fish") || n.contains("prawn")) return baseUrl + "1467003909585-63c6385cdb8d" + params; // Fish
+        
+        // --- SNACKS / DRINKS ---
+        if (n.contains("chai") || n.contains("tea")) return baseUrl + "1541167760496-1628856ab772" + params; // Chai
+        if (n.contains("coffee")) return baseUrl + "1497935586351-b67a49e012bf" + params; // Coffee
+        if (n.contains("lassi") || n.contains("buttermilk")) return baseUrl + "1563636307-f3ec68297076" + params; // Lassi
+        if (n.contains("samosa") || n.contains("pakora")) return baseUrl + "1601050690597-df0568f70950" + params; // Fried Snack
+        
+        // --- CATEGORIES ---
+        if (c.contains("fruit") || n.contains("apple") || n.contains("banana") || n.contains("papaya")) return baseUrl + "1610832958506-aa56368176cf" + params;
+        if (c.contains("vegetable") || n.contains("salad") || n.contains("cucumber")) return baseUrl + "1512621776951-a57141f2eefd" + params;
+        
+        // --- FALLBACK DETERMINISTIC VARIETY ---
+        // Use hash of name to pick 1 of 3 generic images so they don't all look identical
+        int hash = Math.abs(name.hashCode() % 3);
+        if (c.contains("indian")) {
+             String[] indianGenerics = {
+                 baseUrl + "1589302596001-4b3c7990a69d" + params, // Curry
+                 baseUrl + "1606497525501-696001d4f9a0" + params, // Thali
+                 baseUrl + "1626082927389-e175950d8880" + params  // Feast
+             };
+             return indianGenerics[hash];
+        }
+
+        // Generic Default
+        return baseUrl + "1504674900247-0877df9cc836" + params;
+    }
+    
+    private String getExerciseImage(String name, String category) {
+        String n = name.toLowerCase();
+        
+        String baseUrl = "https://images.unsplash.com/photo-";
+        String params = "?auto=format&fit=crop&w=500&q=80";
+
+        // ===== BODYWEIGHT / HOME =====
+        if (n.equals("push-ups") || n.equals("pushups")) return baseUrl + "1598971639067-5a4244fa1c49" + params; // Man doing pushups
+        if (n.equals("wide push-ups")) return baseUrl + "1598971639067-5a4244fa1c49" + params; 
+        if (n.equals("diamond push-ups")) return baseUrl + "1571019614242-c5c5dee9f50b" + params; // Close up gym/floor
+        if (n.equals("squats") || n.equals("squat")) return baseUrl + "1574680096141-1dbd6f21d973" + params; // Squat rack/legs
+        if (n.equals("jump squats")) return baseUrl + "1595163158971-36ba9519c2c2" + params; // Jumping
+        if (n.equals("lunges") || n.equals("lunge")) return baseUrl + "1434608519389-88fa3d92f3e0" + params; // Runner lunging
+        if (n.equals("plank")) return baseUrl + "1571019614242-c5c5dee9f50b" + params; // Plank/Floor
+        if (n.equals("jumping jacks")) return baseUrl + "1595163158971-36ba9519c2c2" + params; // Jumping
+        if (n.equals("burpees")) return baseUrl + "1599058945522-28d584b6f0ff" + params; // Intense training
+        if (n.equals("mountain climbers")) return baseUrl + "1434596922112-19c563067271" + params; // Running motion
+        
+        // ===== GYM / WEIGHTS =====
+        if (n.contains("bench press")) return baseUrl + "1517836357463-c25dfe94c0de" + params; // Bench press setup
+        if (n.contains("deadlift")) return baseUrl + "1517963843464-6b715bebe059" + params; // Weights on floor
+        if (n.contains("pull-ups") || n.contains("pullups")) return baseUrl + "1598971639067-5a4244fa1c49" + params; // Pull up bar context
+        if (n.contains("lat pulldown")) return baseUrl + "1541534741688-6078c6bfb5c5" + params; // Gym machines
+        if (n.contains("overhead press")) return baseUrl + "1532029837877-3377d6ad0e3a" + params; // Dumbbells overhead
+        if (n.contains("bicep curls")) return baseUrl + "1583454110551-21f2fa2afe61" + params; // Dumbbell curl
+        if (n.contains("tricep dips")) return baseUrl + "1571019614242-c5c5dee9f50b" + params; // Dips
+        if (n.contains("leg press")) return baseUrl + "1574680096141-1dbd6f21d973" + params; // Gym legs
+        
+        // ===== YOGA =====
+        if (n.contains("sun salutation") || n.contains("surya")) return baseUrl + "1593164842264-854604eb9233" + params; // Yoga silhouette
+        if (n.contains("tree pose")) return baseUrl + "1566501202865-c740e36852ba" + params; // Tree pose
+        if (n.contains("warrior")) return baseUrl + "1506126613408-eca07ce68773" + params; // Yoga beach
+        if (n.contains("downward dog")) return baseUrl + "1544367563-121cf94e191e" + params; // Yoga stretch
+        if (n.contains("cobra")) return baseUrl + "1575052814088-dcbb52f20556" + params; // Stretching on mat
+        if (n.contains("child's pose")) return baseUrl + "1544367563-121cf94e191e" + params; // Resting
+        if (n.contains("stretch")) return baseUrl + "1518611012118-696072aa579a" + params; // General stretching
+        
+        // ===== HIIT / CARDIO =====
+        if (n.contains("run") || n.contains("jog") || n.contains("treadmill")) return baseUrl + "1452626038306-3a7a48dfacf0" + params; // Running shoes/track
+        if (n.contains("cycle") || n.contains("bike")) return baseUrl + "1541625602330-2277a4c46182" + params; // Cyclist
+        if (n.contains("swim")) return baseUrl + "1600965962361-9035dbfd1c50" + params; // Swimmer
+        if (n.contains("jump rope")) return baseUrl + "1595163158971-36ba9519c2c2" + params; // Skipping
+        if (n.contains("box jump")) return baseUrl + "1599058945522-28d584b6f0ff" + params; // Plyo box
+        if (n.contains("kettlebell")) return baseUrl + "1599058945522-28d584b6f0ff" + params; // Kettlebell
+        if (n.contains("rowing")) return baseUrl + "1540497077202-7c8a3999166f" + params; // Rower
+        if (n.contains("tennis")) return baseUrl + "1622602703816-e575742c0698" + params; // Tennis court
+        if (n.contains("badminton")) return baseUrl + "1626248559288-12c828cb2c67" + params; // Badminton
+        if (n.contains("football") || n.contains("soccer")) return baseUrl + "1579952363873-27f3bade9f55" + params; // Football
+        if (n.contains("cricket")) return baseUrl + "1531415074984-95691ec13189" + params; // Cricket
+        if (n.contains("zumba") || n.contains("dance")) return baseUrl + "1524594152303-9fd13543fe6e" + params; // Dancing
+        if (n.contains("hike") || n.contains("hiking")) return baseUrl + "1551632811-561732d1e306" + params; // Hiking boots
+        
+        // Default Fallback
+        return baseUrl + "1517836357463-c25dfe94c0de" + params; // General Gym
     }
 }
 

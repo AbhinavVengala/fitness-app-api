@@ -7,7 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Service for managing the food reference database.
@@ -110,6 +115,56 @@ public class FoodService {
         
         foodRepository.deleteById(id);
         return true;
+    }
+
+    /**
+     * Get food by barcode (Local DB or OpenFoodFacts)
+     */
+    public Food getFoodByBarcode(String barcode) {
+        // 1. Check local DB
+        Optional<Food> localFood = foodRepository.findByBarcode(barcode);
+        if (localFood.isPresent()) {
+            return localFood.get();
+        }
+
+        // 2. Fetch from OpenFoodFacts
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://world.openfoodfacts.org/api/v0/product/" + barcode + ".json";
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+
+            if (response != null && (int) response.get("status") == 1) {
+                Map<String, Object> product = (Map<String, Object>) response.get("product");
+                Map<String, Object> nutriments = (Map<String, Object>) product.get("nutriments");
+
+                Food newFood = new Food();
+                newFood.setName((String) product.get("product_name"));
+                newFood.setBarcode(barcode);
+                newFood.setImageUrl((String) product.get("image_url"));
+                newFood.setCategory("snacks"); // Default category, maybe infer later
+
+                // Extract macros (per 100g)
+                newFood.setCalories(getDoubleValue(nutriments, "energy-kcal_100g"));
+                newFood.setProtein(getDoubleValue(nutriments, "proteins_100g"));
+                newFood.setCarbs(getDoubleValue(nutriments, "carbohydrates_100g"));
+                newFood.setFats(getDoubleValue(nutriments, "fat_100g"));
+                
+                // Save to local DB for caching
+                return foodRepository.save(newFood);
+            }
+        } catch (Exception e) {
+            System.err.println("Error fetching from OpenFoodFacts: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    private double getDoubleValue(Map<String, Object> map, String key) {
+        Object val = map.get(key);
+        if (val instanceof Number) {
+            return ((Number) val).doubleValue();
+        }
+        return 0.0;
     }
 }
 

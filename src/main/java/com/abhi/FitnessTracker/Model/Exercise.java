@@ -23,6 +23,7 @@ public class Exercise {
     private Double caloriesPerRep; // for rep-based exercises
     private Double met; // for duration-based exercises (metabolic equivalent)
     private String category; // home, gym, yoga, hiit, sports
+    private String imageUrl;
     private String createdByUserId; // null = system/admin, userId = user custom item
     
     // Constructor without createdByUserId for seed data
@@ -32,7 +33,20 @@ public class Exercise {
         this.type = type;
         this.caloriesPerRep = caloriesPerRep;
         this.met = met;
+        this.met = met;
         this.category = category;
+        this.imageUrl = null;
+        this.createdByUserId = null;
+    }
+
+    public Exercise(String id, String name, String type, Double caloriesPerRep, Double met, String category, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.caloriesPerRep = caloriesPerRep;
+        this.met = met;
+        this.category = category;
+        this.imageUrl = imageUrl;
         this.createdByUserId = null;
     }
 }

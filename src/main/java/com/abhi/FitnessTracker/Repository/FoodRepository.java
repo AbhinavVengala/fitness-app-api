@@ -31,4 +31,8 @@ public interface FoodRepository extends MongoRepository<Food, String> {
     Page<Food> findByCategoryAndUser(String category, String userId, Pageable pageable);
 
     boolean existsByName(String name);
+    
+    Food findByName(String name);
+
+    java.util.Optional<Food> findByBarcode(String barcode);
 }
