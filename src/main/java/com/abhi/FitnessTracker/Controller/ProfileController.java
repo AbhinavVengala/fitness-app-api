@@ -109,6 +109,22 @@ public class ProfileController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
+    /**
+     * Add water intake for a profile (Atomic add)
+     * POST /api/users/{userId}/profiles/{profileId}/water/add
+     */
+    @PostMapping("/{profileId}/water/add")
+    public ResponseEntity<?> addWaterIntake(
+            @PathVariable String userId,
+            @PathVariable String profileId,
+            @RequestBody WaterRequest request) {
+        try {
+            return ResponseEntity.ok(profileService.addWaterIntake(userId, profileId, request.waterIntake()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
     
     // DTOs
     public record WaterRequest(int waterIntake) {}

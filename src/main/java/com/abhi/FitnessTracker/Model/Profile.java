@@ -3,6 +3,7 @@ package com.abhi.FitnessTracker.Model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.Map;
 
 /**
  * Embedded document representing a user profile.
@@ -22,4 +23,6 @@ public class Profile {
     private String experienceLevel;
     private Goals goals;
     private int waterIntake;
+    private String lastWaterDate;
+    private Map<String, Integer> waterIntakeHistory;
 }

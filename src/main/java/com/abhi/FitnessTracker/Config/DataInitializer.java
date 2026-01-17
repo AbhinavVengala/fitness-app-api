@@ -4,6 +4,9 @@ import com.abhi.FitnessTracker.Model.Exercise;
 import com.abhi.FitnessTracker.Model.Food;
 import com.abhi.FitnessTracker.Repository.ExerciseRepository;
 import com.abhi.FitnessTracker.Repository.FoodRepository;
+import com.abhi.FitnessTracker.Model.Restaurant;
+import com.abhi.FitnessTracker.Model.MenuItem;
+import com.abhi.FitnessTracker.Repository.RestaurantRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +17,19 @@ public class DataInitializer implements CommandLineRunner {
     
     private final FoodRepository foodRepository;
     private final ExerciseRepository exerciseRepository;
+    private final RestaurantRepository restaurantRepository;
     
-    public DataInitializer(FoodRepository foodRepository, ExerciseRepository exerciseRepository) {
+    public DataInitializer(FoodRepository foodRepository, ExerciseRepository exerciseRepository, RestaurantRepository restaurantRepository) {
         this.foodRepository = foodRepository;
         this.exerciseRepository = exerciseRepository;
+        this.restaurantRepository = restaurantRepository;
     }
     
     @Override
     public void run(String... args) {
         initializeFoods();
         initializeExercises();
+        initializeRestaurants();
     }
     
     private void initializeFoods() {
@@ -500,6 +506,47 @@ public class DataInitializer implements CommandLineRunner {
         
         // Default Fallback
         return baseUrl + "1517836357463-c25dfe94c0de" + params; // General Gym
+    }
+
+
+    private void initializeRestaurants() {
+        if (restaurantRepository.count() > 0) {
+            return;
+        }
+
+        List<Restaurant> restaurants = List.of(
+            new Restaurant(null, "Millet Marvels", 4.8, "30-40 min", "2.5 km", "Jubilee Hills", "Healthy", 
+                "https://images.unsplash.com/photo-1626074353765-517a681e40be?auto=format&fit=crop&w=500&q=80",
+                List.of(
+                    new MenuItem("101", "Ragi Dosa & Chutney", 320, 150.0, "Crispy finger millet crepes with peanut relish"),
+                    new MenuItem("102", "Millet Curd Rice", 280, 180.0, "Probiotic-rich millet rice with pomegranate")
+                )
+            ),
+            new Restaurant(null, "Hyderabad Spice & Grill", 4.6, "35-45 min", "3.8 km", "Gachibowli", "Protein",
+                "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=500&q=80",
+                List.of(
+                    new MenuItem("201", "Grilled Chicken Breast", 450, 320.0, "Marinated with indian spices, served with veggies"),
+                    new MenuItem("202", "Tandoori Paneer Tikka", 380, 280.0, "Cottage cheese grilled in clay oven")
+                )
+            ),
+            new Restaurant(null, "Pure & Natural", 4.9, "25-30 min", "1.2 km", "Hitech City", "Vegan",
+                "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=500&q=80",
+                List.of(
+                    new MenuItem("301", "Quinoa Pulao", 350, 250.0, "Protein-rich quinoa cooked with garden veggies"),
+                    new MenuItem("302", "Sprouts Salad Box", 200, 120.0, "Moong sprouts, cucumber, carrot, lemon dressing")
+                )
+            ),
+            new Restaurant(null, "Keto Kitchen Hyderabad", 4.7, "40-50 min", "5.0 km", "Banjara Hills", "Keto",
+                "https://images.unsplash.com/photo-1606471191009-63994c53433b?auto=format&fit=crop&w=500&q=80",
+                List.of(
+                    new MenuItem("401", "Keto Butter Chicken", 580, 350.0, "Boneless chicken in rich tomato butter gravy, no sugar"),
+                    new MenuItem("402", "Cauliflower Rice Biryani", 320, 290.0, "Low-carb version of the city's favorite dish")
+                )
+            )
+        );
+
+        restaurantRepository.saveAll(restaurants);
+        System.out.println("Initialized " + restaurants.size() + " restaurants.");
     }
 }
 

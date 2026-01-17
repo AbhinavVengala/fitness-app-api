@@ -6,6 +6,7 @@ import com.abhi.FitnessTracker.Model.User;
 import com.abhi.FitnessTracker.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,49 @@ public class ProfileService {
     public ProfileService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+    /**
+     * Helper to verify if water intake needs reset.
+     * Returns true if profile was modified.
+     */
+    private boolean checkAndResetWater(Profile profile) {
+        String today = LocalDate.now().toString();
+        
+        if (profile.getWaterIntakeHistory() == null) {
+            profile.setWaterIntakeHistory(new java.util.HashMap<>());
+        }
+        
+        if (profile.getLastWaterDate() == null || !profile.getLastWaterDate().equals(today)) {
+            if (profile.getLastWaterDate() != null && profile.getWaterIntake() > 0) {
+                profile.getWaterIntakeHistory().put(profile.getLastWaterDate(), profile.getWaterIntake());
+            }
+            
+            profile.setWaterIntake(0);
+            profile.setLastWaterDate(today);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Add water intake for a profile (Atomic update)
+     */
+    public Profile addWaterIntake(String userId, String profileId, int amount) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        Profile profile = user.getProfileById(profileId);
+        if (profile == null) {
+            throw new RuntimeException("Profile not found");
+        }
+        
+        checkAndResetWater(profile);
+        
+        profile.setWaterIntake(profile.getWaterIntake() + amount);
+        userRepository.save(user);
+        
+        return profile;
+    }
     
     /**
      * Get all profiles for a user
@@ -27,7 +71,21 @@ public class ProfileService {
     public List<Profile> getProfiles(String userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getProfiles();
+        
+        List<Profile> profiles = user.getProfiles();
+        boolean changed = false;
+        
+        for (Profile p : profiles) {
+            if (checkAndResetWater(p)) {
+                changed = true;
+            }
+        }
+        
+        if (changed) {
+            userRepository.save(user);
+        }
+        
+        return profiles;
     }
     
     /**
@@ -37,15 +95,16 @@ public class ProfileService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
         
-        // Generate ID if not provided
         if (profile.getId() == null || profile.getId().isEmpty()) {
             profile.setId(UUID.randomUUID().toString());
         }
         
-        // Set default goals if not provided
         if (profile.getGoals() == null) {
             profile.setGoals(new Goals(2000, 100, 200, 65, 8));
         }
+        
+        profile.setWaterIntake(0);
+        profile.setLastWaterDate(LocalDate.now().toString());
         
         user.addProfile(profile);
         userRepository.save(user);
@@ -101,6 +160,7 @@ public class ProfileService {
         }
         
         profile.setWaterIntake(waterIntake);
+        profile.setLastWaterDate(LocalDate.now().toString());
         userRepository.save(user);
         
         return profile;
@@ -116,6 +176,10 @@ public class ProfileService {
         Profile profile = user.getProfileById(profileId);
         if (profile == null) {
             throw new RuntimeException("Profile not found");
+        }
+        
+        if (checkAndResetWater(profile)) {
+            userRepository.save(user);
         }
         
         return profile;
