@@ -1,6 +1,7 @@
 package com.abhi.FitnessTracker.Config;
 
 import com.abhi.FitnessTracker.Security.JwtAuthFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,13 +22,16 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
+
     private final JwtAuthFilter jwtAuthFilter;
-    
+
+    @Value("${cors.allowed-origins:http://localhost:5173}")
+    private String allowedOrigins;
+
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -39,41 +43,37 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/foods/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/exercises/**").permitAll()
+                // Actuator health check (for Docker/monitoring)
+                .requestMatchers("/actuator/health").permitAll()
                 // Admin-only endpoints
                 .requestMatchers(HttpMethod.POST, "/api/foods").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/foods/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/foods/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.DELETE, "/api/foods/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/exercises").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/exercises/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/exercises/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.DELETE, "/api/exercises/**").hasRole("ADMIN")
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
-    
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        String allowedOriginsEnv = System.getenv("CORS_ALLOWED_ORIGINS");
-        List<String> allowedOrigins = (allowedOriginsEnv != null && !allowedOriginsEnv.isEmpty()) 
-            ? Arrays.asList(allowedOriginsEnv.split(",")) 
-            : Arrays.asList("http://localhost:5173", "http://localhost:3000", "http://localhost:4173");
-            
-        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

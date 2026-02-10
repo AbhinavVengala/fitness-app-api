@@ -15,7 +15,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/profiles/{profileId}/workout-log")
-@CrossOrigin(origins = "http://localhost:5173")
 public class WorkoutLogController {
     
     private final WorkoutLogService workoutLogService;

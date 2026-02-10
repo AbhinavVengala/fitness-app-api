@@ -17,7 +17,7 @@ import java.util.Map;
 @Component
 public class JwtUtil {
     
-    @Value("${jwt.secret:your-256-bit-secret-key-for-jwt-signing-needs-to-be-long}")
+    @Value("${jwt.secret}")
     private String secretKey;
     
     @Value("${jwt.expiration:86400000}") // 24 hours in milliseconds

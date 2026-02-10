@@ -15,7 +15,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/profiles/{profileId}/food-log")
-@CrossOrigin(origins = "http://localhost:5173")
 public class FoodLogController {
     
     private final FoodLogService foodLogService;

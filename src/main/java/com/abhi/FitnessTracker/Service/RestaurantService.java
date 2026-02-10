@@ -16,4 +16,16 @@ public class RestaurantService {
     public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll();
     }
+
+    public Restaurant getRestaurantById(String id) {
+        return restaurantRepository.findById(id).orElse(null);
+    }
+
+    public Restaurant saveRestaurant(Restaurant restaurant) {
+        return restaurantRepository.save(restaurant);
+    }
+
+    public void deleteRestaurant(String id) {
+        restaurantRepository.deleteById(id);
+    }
 }

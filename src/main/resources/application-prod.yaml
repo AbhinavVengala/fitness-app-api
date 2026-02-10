@@ -2,20 +2,42 @@
 spring:
   data:
     mongodb:
-      # Use environment variable for MongoDB Atlas connection string
       uri: ${MONGODB_URI}
       database: ${MONGODB_DATABASE:fitness}
+  # Email Configuration — must be set via env vars
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
-# JWT Configuration - Use environment variable for secret
+# JWT Configuration — must be set via env vars
 jwt:
   secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION:86400000}  # 24 hours default
+  expiration: ${JWT_EXPIRATION:86400000}
 
-# CORS - Restrict to production domain
+# Razorpay — must be set via env vars (use live keys in production)
+razorpay:
+  key:
+    id: ${RAZORPAY_KEY_ID}
+    secret: ${RAZORPAY_KEY_SECRET}
+
+# App Config
+app:
+  frontend:
+    url: ${APP_FRONTEND_URL}
+
+# CORS — restrict to production domain
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://your-domain.com}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
 
-# Logging - Warn level for production
+# Logging — production level
 logging:
   level:
     root: WARN

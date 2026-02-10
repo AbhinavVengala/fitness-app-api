@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/foods")
-@CrossOrigin(origins = "http://localhost:5173")
 public class FoodController {
     
     private final FoodService foodService;
@@ -34,13 +33,13 @@ public class FoodController {
      * GET /api/foods?userId={userId}&page=0&size=20
      */
     @GetMapping
-    public ResponseEntity<List<Food>> getAllFoods(
+    public ResponseEntity<Page<Food>> getAllFoods(
             @RequestParam(required = false) String userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(foodService.getAll(userId, pageable).getContent());
+        return ResponseEntity.ok(foodService.getAll(userId, pageable));
     }
     
     /**
@@ -48,14 +47,14 @@ public class FoodController {
      * GET /api/foods/search?q={query}&userId={userId}&page=0&size=20
      */
     @GetMapping("/search")
-    public ResponseEntity<List<Food>> searchFoods(
+    public ResponseEntity<Page<Food>> searchFoods(
             @RequestParam String q,
             @RequestParam(required = false) String userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
             
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(foodService.searchByName(q, userId, pageable).getContent());
+        return ResponseEntity.ok(foodService.searchByName(q, userId, pageable));
     }
     
     /**
@@ -63,14 +62,14 @@ public class FoodController {
      * GET /api/foods/category/{category}?userId={userId}&page=0&size=20
      */
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<Food>> getFoodsByCategory(
+    public ResponseEntity<Page<Food>> getFoodsByCategory(
             @PathVariable String category,
             @RequestParam(required = false) String userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
             
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(foodService.getByCategory(category, userId, pageable).getContent());
+        return ResponseEntity.ok(foodService.getByCategory(category, userId, pageable));
     }
     
     /**

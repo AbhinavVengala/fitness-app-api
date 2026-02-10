@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/exercises")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ExerciseController {
     
     private final ExerciseRepository exerciseRepository;
