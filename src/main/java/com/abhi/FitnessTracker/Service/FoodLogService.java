@@ -72,9 +72,14 @@ public class FoodLogService {
     }
     
     /**
-     * Get food logs for a date range
+     * Get food logs for a date range.
+     * Filters in Java to avoid MongoDB LocalDate/timezone conversion issues.
      */
     public List<FoodLog> getLogsBetweenDates(String profileId, LocalDate startDate, LocalDate endDate) {
-        return foodLogRepository.findByProfileIdAndDateBetween(profileId, startDate, endDate);
+        return foodLogRepository.findByProfileId(profileId).stream()
+            .filter(log -> log.getDate() != null
+                && !log.getDate().isBefore(startDate)
+                && !log.getDate().isAfter(endDate))
+            .collect(java.util.stream.Collectors.toList());
     }
 }

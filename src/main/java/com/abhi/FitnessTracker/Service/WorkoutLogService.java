@@ -87,9 +87,14 @@ public class WorkoutLogService {
     }
     
     /**
-     * Get workout logs for a date range
+     * Get workout logs for a date range.
+     * Filters in Java to avoid MongoDB LocalDate/timezone conversion issues.
      */
     public List<WorkoutLog> getLogsBetweenDates(String profileId, LocalDate startDate, LocalDate endDate) {
-        return workoutLogRepository.findByProfileIdAndDateBetween(profileId, startDate, endDate);
+        return workoutLogRepository.findByProfileId(profileId).stream()
+            .filter(log -> log.getDate() != null
+                && !log.getDate().isBefore(startDate)
+                && !log.getDate().isAfter(endDate))
+            .collect(java.util.stream.Collectors.toList());
     }
 }
