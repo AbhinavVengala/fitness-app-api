@@ -139,4 +139,19 @@ public class AuthService {
         
         tokenRepository.delete(resetToken);
     }
+
+    /**
+     * Permanently delete a user account and all associated data.
+     * Compliant with DPDPA 2023 right to erasure.
+     */
+    public void deleteAccount(String userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Remove all password reset tokens for this user
+        tokenRepository.deleteByEmail(user.getEmail());
+
+        // Delete the user document (cascades all embedded profiles & food/workout logs)
+        userRepository.deleteById(userId);
+    }
 }

@@ -120,6 +120,29 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
+    /**
+     * Permanently delete the authenticated user's account and all data.
+     * Implements DPDPA 2023 right to erasure.
+     * DELETE /api/auth/delete-account
+     */
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body(Map.of("error", "No token provided"));
+            }
+            String token = authHeader.substring(7);
+            String userId = jwtUtil.getUserId(token);
+            if (userId == null || jwtUtil.isTokenExpired(token)) {
+                return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
+            }
+            authService.deleteAccount(userId);
+            return ResponseEntity.ok(Map.of("message", "Account successfully deleted"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
     
     // DTOs with validation
     public record RegisterRequest(
