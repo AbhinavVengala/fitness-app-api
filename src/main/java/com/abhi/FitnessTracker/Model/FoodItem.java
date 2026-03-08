@@ -19,6 +19,8 @@ public class FoodItem {
     private double carbs;
     private double fats;
     private double quantity;    // Number of servings (e.g., 1.5)
+    private String servingUnit; // 'g' or 'serving'
+    private double servingValue; // actual grams or servings count
     private String meal;        // breakfast, lunch, dinner, snack
 }
 

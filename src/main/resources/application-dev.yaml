@@ -28,6 +28,10 @@ razorpay:
     id: ${RAZORPAY_KEY_ID:rzp_test_placeholder}
     secret: ${RAZORPAY_KEY_SECRET:secret_placeholder}
 
+# Gemini AI - Get your key from https://aistudio.google.com/apikey
+gemini:
+  api-key: ${GEMINI_API_KEY:your-gemini-api-key-here}
+
 # App Config
 app:
   frontend:
